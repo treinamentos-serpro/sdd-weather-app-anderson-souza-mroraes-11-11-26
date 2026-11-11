@@ -1,4 +1,4 @@
-import { getShortDate } from '../lib/format';
+import { formatNumber, getShortDate } from '../lib/format';
 import { formatTemperature } from '../lib/temperature';
 import { getWeatherLabel } from '../lib/weatherCodes';
 import type { ForecastHour, Unit } from '../types/weather';
@@ -12,7 +12,7 @@ interface ForecastHourlyListProps {
 
 function formatValue(value: number | null, unit: string, round = false): string {
   if (value === null) return '—';
-  return `${round ? Math.round(value) : value}${unit}`;
+  return `${round ? Math.round(value) : formatNumber(value)}${unit}`;
 }
 
 function HourMetric({ label, children }: { label: string; children: string }) {

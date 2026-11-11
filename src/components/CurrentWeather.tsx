@@ -1,3 +1,4 @@
+import { formatNumber } from '../lib/format';
 import { formatTemperature } from '../lib/temperature';
 import { getWeatherIcon, getWeatherLabel } from '../lib/weatherCodes';
 import type { City, CurrentWeather as CurrentWeatherType, Unit } from '../types/weather';
@@ -30,7 +31,7 @@ function Metric({ icon, label, value }: MetricProps) {
 
 function formatMetric(value: number | null, unit: string, round = false): string {
   if (value === null) return '—';
-  return `${round ? Math.round(value) : value}${unit}`;
+  return `${round ? Math.round(value) : formatNumber(value)}${unit}`;
 }
 
 /** Seção "hero" com as condições atuais da cidade selecionada. */

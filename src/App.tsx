@@ -47,46 +47,51 @@ export default function App() {
       <main
         id="main-content"
         tabIndex={-1}
-        aria-busy={status === 'loading'}
         className="mx-auto max-w-5xl space-y-8 px-4 py-8 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400"
       >
-        {status === 'idle' && (
-          <EmptyState
-            title="Busque uma cidade para começar"
-            hint="Ex.: Seattle, Lisboa, São Paulo…"
-          />
-        )}
-
         {status === 'loading' && <LoadingState />}
 
-        {cities.length > 0 && (
-          <CityResults
-            cities={cities}
-            selectedCityId={displayedData?.city.id}
-            disabled={status === 'loading'}
-            onSelect={selectCity}
-          />
-        )}
-
-        {status === 'empty' && (
-          <EmptyState
-            title={`Nenhuma cidade encontrada para "${query}"`}
-            hint="Verifique a grafia e tente novamente."
-          />
-        )}
-
-        {status === 'error' && error && <ErrorState message={error} onRetry={retry} />}
-
-        {displayedData && (
-          <>
-            <CurrentWeather city={displayedData.city} current={displayedData.current} unit={unit} />
-            <ForecastList
-              forecast={displayedData.forecast}
-              hourlyForecast={displayedData.hourlyForecast}
-              unit={unit}
+        <div aria-busy={status === 'loading'}>
+          {status === 'idle' && (
+            <EmptyState
+              title="Busque uma cidade para começar"
+              hint="Ex.: Seattle, Lisboa, São Paulo…"
             />
-          </>
-        )}
+          )}
+
+          {cities.length > 0 && (
+            <CityResults
+              cities={cities}
+              selectedCityId={displayedData?.city.id}
+              disabled={status === 'loading'}
+              onSelect={selectCity}
+            />
+          )}
+
+          {status === 'empty' && (
+            <EmptyState
+              title={`Nenhuma cidade encontrada para "${query}"`}
+              hint="Verifique a grafia e tente novamente."
+            />
+          )}
+
+          {status === 'error' && error && <ErrorState message={error} onRetry={retry} />}
+
+          {displayedData && (
+            <>
+              <CurrentWeather
+                city={displayedData.city}
+                current={displayedData.current}
+                unit={unit}
+              />
+              <ForecastList
+                forecast={displayedData.forecast}
+                hourlyForecast={displayedData.hourlyForecast}
+                unit={unit}
+              />
+            </>
+          )}
+        </div>
       </main>
 
       <footer className="py-8 text-center text-sm text-white/70">

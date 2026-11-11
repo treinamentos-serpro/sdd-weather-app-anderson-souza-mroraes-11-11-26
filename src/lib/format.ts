@@ -17,6 +17,14 @@ const MONTHS = [
   'Nov',
   'Dez',
 ];
+const NUMBER_FORMATTER = new Intl.NumberFormat('pt-BR', {
+  useGrouping: false,
+  maximumFractionDigits: 1,
+});
+
+export function formatNumber(value: number): string {
+  return NUMBER_FORMATTER.format(value);
+}
 
 /** Faz parse de uma data ISO (YYYY-MM-DD) como data local, sem fuso. */
 function parseLocalDate(iso: string): Date {

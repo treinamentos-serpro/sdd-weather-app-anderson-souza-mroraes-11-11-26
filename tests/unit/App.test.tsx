@@ -88,8 +88,10 @@ describe('App', () => {
 
     await user.type(screen.getByLabelText(/buscar cidade/i), 'xyz');
     await user.click(screen.getByRole('button', { name: /buscar/i }));
-    expect(screen.getByRole('status')).toBeInTheDocument();
-    expect(screen.getByRole('main')).toHaveAttribute('aria-busy', 'true');
+    const loadingStatus = screen.getByRole('status');
+    expect(loadingStatus).toBeInTheDocument();
+    expect(screen.getByRole('main')).not.toHaveAttribute('aria-busy', 'true');
+    expect(loadingStatus.closest('[aria-busy="true"]')).toBeNull();
     expect(screen.getByLabelText(/buscar cidade/i)).toBeDisabled();
 
     await act(async () => {

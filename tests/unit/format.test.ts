@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getDayLabel, getShortDate } from '../../src/lib/format';
+import { formatNumber, getDayLabel, getShortDate } from '../../src/lib/format';
 
 describe('format', () => {
   it('rotula o primeiro e o segundo dia', () => {
@@ -18,5 +18,10 @@ describe('format', () => {
 
   it('usa o primeiro dia do ano quando a data recebida está truncada', () => {
     expect(getShortDate('2026')).toBe('1 Jan');
+  });
+
+  it('formata números pt-BR sem alterar zeros', () => {
+    expect(formatNumber(0.1)).toBe('0,1');
+    expect(formatNumber(0)).toBe('0');
   });
 });

@@ -74,6 +74,7 @@ describe('ForecastList', () => {
     expect(within(hourlyRegion).getByText('12:00')).toBeInTheDocument();
     expect(within(hourlyRegion).queryByText('06:00')).not.toBeInTheDocument();
     expect(within(hourlyRegion).getAllByText('—')).toHaveLength(4);
+    expect(within(hourlyRegion).getByText('0,1 mm')).toBeInTheDocument();
   });
 
   it('informa quando o dia selecionado não tem dados horários', async () => {

@@ -76,4 +76,23 @@ describe('CurrentWeather', () => {
     expect(screen.getByText('0°')).toBeInTheDocument();
     expect(screen.getAllByText('—')).toHaveLength(4);
   });
+
+  it('formata precipitação decimal usando vírgula pt-BR', () => {
+    const city: City = {
+      id: 4,
+      name: 'Lisboa',
+      country: 'Portugal',
+      latitude: 38.72,
+      longitude: -9.14,
+    };
+    render(
+      <CurrentWeather
+        city={city}
+        current={{ ...CURRENT, precipitation: 0.1 }}
+        unit="celsius"
+      />,
+    );
+
+    expect(screen.getByText('0,1 mm')).toBeInTheDocument();
+  });
 });
