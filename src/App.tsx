@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import type { Unit } from './types/weather';
-import { useWeather } from './hooks/useWeather';
-import SearchBar from './components/SearchBar';
-import UnitToggle from './components/UnitToggle';
+import CityResults from './components/CityResults';
 import CurrentWeather from './components/CurrentWeather';
 import ForecastList from './components/ForecastList';
-import LoadingState from './components/states/LoadingState';
-import ErrorState from './components/states/ErrorState';
+import SearchBar from './components/SearchBar';
 import EmptyState from './components/states/EmptyState';
+import ErrorState from './components/states/ErrorState';
+import LoadingState from './components/states/LoadingState';
+import UnitToggle from './components/UnitToggle';
+import { useWeather } from './hooks/useWeather';
+import type { Unit } from './types/weather';
 
 /**
  * WeatherView — aplicação completa de previsão do tempo.
@@ -16,27 +17,39 @@ import EmptyState from './components/states/EmptyState';
  * Copilot, do briefing à entrega.
  */
 export default function App() {
-  const { status, data, error, query, search, retry } = useWeather();
+  const { status, data, cities, error, query, search, selectCity, retry } = useWeather();
   const [unit, setUnit] = useState<Unit>('celsius');
+  const displayedData = status === 'success' ? data : null;
 
   return (
     <div className="min-h-screen text-white">
+      <a
+        href="#main-content"
+        className="sr-only z-50 rounded-lg bg-night-700 px-4 py-3 text-white focus:fixed focus:left-4 focus:top-4 focus:not-sr-only focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400"
+      >
+        Pular para o conteúdo
+      </a>
       <header className="border-b border-white/10">
         <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             <span aria-hidden="true" className="text-2xl text-sun">
               ☀️
             </span>
-            <span className="text-lg font-bold">WeatherView</span>
+            <h1 className="text-lg font-bold">WeatherView</h1>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex w-full min-w-0 items-center gap-2 sm:w-auto sm:gap-3">
             <SearchBar onSearch={search} disabled={status === 'loading'} />
             <UnitToggle unit={unit} onChange={setUnit} />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl space-y-8 px-4 py-8">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        aria-busy={status === 'loading'}
+        className="mx-auto max-w-5xl space-y-8 px-4 py-8 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400"
+      >
         {status === 'idle' && (
           <EmptyState
             title="Busque uma cidade para começar"
@@ -45,6 +58,15 @@ export default function App() {
         )}
 
         {status === 'loading' && <LoadingState />}
+
+        {cities.length > 0 && (
+          <CityResults
+            cities={cities}
+            selectedCityId={displayedData?.city.id}
+            disabled={status === 'loading'}
+            onSelect={selectCity}
+          />
+        )}
 
         {status === 'empty' && (
           <EmptyState
@@ -55,21 +77,25 @@ export default function App() {
 
         {status === 'error' && error && <ErrorState message={error} onRetry={retry} />}
 
-        {status === 'success' && data && (
+        {displayedData && (
           <>
-            <CurrentWeather city={data.city} current={data.current} unit={unit} />
-            <ForecastList forecast={data.forecast} unit={unit} />
+            <CurrentWeather city={displayedData.city} current={displayedData.current} unit={unit} />
+            <ForecastList
+              forecast={displayedData.forecast}
+              hourlyForecast={displayedData.hourlyForecast}
+              unit={unit}
+            />
           </>
         )}
       </main>
 
-      <footer className="py-8 text-center text-sm text-white/40">
+      <footer className="py-8 text-center text-sm text-white/70">
         Dados por{' '}
         <a
           href="https://open-meteo.com/"
           target="_blank"
           rel="noreferrer"
-          className="text-accent-400 hover:underline"
+          className="text-accent-400 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400"
         >
           Open-Meteo
         </a>

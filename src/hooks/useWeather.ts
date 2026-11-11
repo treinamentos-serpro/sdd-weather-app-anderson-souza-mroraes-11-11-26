@@ -1,8 +1,8 @@
-import { useCallback, useState } from 'react';
-import type { City, WeatherData } from '../types/weather';
+import { useCallback, useRef, useState } from 'react';
 import { getWeather, searchCities, WeatherServiceError } from '../services/weatherService';
+import type { City, WeatherData } from '../types/weather';
 
-export type WeatherStatus = 'idle' | 'loading' | 'success' | 'error' | 'empty';
+export type WeatherStatus = 'idle' | 'loading' | 'results' | 'success' | 'error' | 'empty';
 
 interface UseWeatherResult {
   status: WeatherStatus;
@@ -26,41 +26,46 @@ export function useWeather(): UseWeatherResult {
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [lastCity, setLastCity] = useState<City | null>(null);
+  const operationId = useRef(0);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: search inicia o fluxo na montagem; loadWeather é estável
+  const loadWeather = useCallback(async (city: City, requestId?: number) => {
+    const activeRequestId = requestId ?? ++operationId.current;
+    setStatus('loading');
+    setError(null);
+    setLastCity(city);
+    try {
+      const weather = await getWeather(city);
+      if (activeRequestId !== operationId.current) return;
+      setData(weather);
+      setStatus('success');
+    } catch (err) {
+      if (activeRequestId !== operationId.current) return;
+      setStatus('error');
+      setError(toMessage(err));
+    }
+  }, []);
+
   const search = useCallback(async (name: string) => {
     const trimmed = name.trim();
+    const requestId = ++operationId.current;
     setQuery(trimmed);
     if (!trimmed) return;
 
     setStatus('loading');
     setError(null);
     setCities([]);
+    setLastCity(null);
     try {
       const results = await searchCities(trimmed);
+      if (requestId !== operationId.current) return;
       if (results.length === 0) {
         setStatus('empty');
         return;
       }
-      // Seleciona automaticamente a primeira correspondência, mas mantém a
-      // lista para o usuário trocar.
       setCities(results);
-      await loadWeather(results[0]);
+      setStatus('results');
     } catch (err) {
-      setStatus('error');
-      setError(toMessage(err));
-    }
-  }, []);
-
-  const loadWeather = useCallback(async (city: City) => {
-    setStatus('loading');
-    setError(null);
-    setLastCity(city);
-    try {
-      const weather = await getWeather(city);
-      setData(weather);
-      setStatus('success');
-    } catch (err) {
+      if (requestId !== operationId.current) return;
       setStatus('error');
       setError(toMessage(err));
     }

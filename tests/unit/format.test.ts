@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { getDayLabel, getShortDate } from '../../src/lib/format';
 
 describe('format', () => {
@@ -14,5 +14,9 @@ describe('format', () => {
 
   it('formata data curta', () => {
     expect(getShortDate('2026-06-16')).toBe('16 Jun');
+  });
+
+  it('usa o primeiro dia do ano quando a data recebida está truncada', () => {
+    expect(getShortDate('2026')).toBe('1 Jan');
   });
 });
