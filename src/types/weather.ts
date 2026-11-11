@@ -23,10 +23,10 @@ export interface City {
 export interface CurrentWeather {
   temperature: number;
   weatherCode: number;
-  humidity: number;
-  windSpeed: number;
-  pressure: number;
-  precipitation: number;
+  humidity: number | null;
+  windSpeed: number | null;
+  pressure: number | null;
+  precipitation: number | null;
   time: string;
 }
 
@@ -36,7 +36,17 @@ export interface ForecastDay {
   min: number;
   max: number;
   weatherCode: number;
-  precipitationProbability: number;
+  precipitationProbability: number | null;
+}
+
+export interface ForecastHour {
+  time: string;
+  temperature: number;
+  weatherCode: number;
+  precipitationProbability: number | null;
+  precipitation: number | null;
+  windSpeed: number | null;
+  humidity: number | null;
 }
 
 /** Agregado entregue à UI: cidade + clima atual + 5 dias de previsão. */
@@ -44,4 +54,5 @@ export interface WeatherData {
   city: City;
   current: CurrentWeather;
   forecast: ForecastDay[];
+  hourlyForecast: ForecastHour[];
 }

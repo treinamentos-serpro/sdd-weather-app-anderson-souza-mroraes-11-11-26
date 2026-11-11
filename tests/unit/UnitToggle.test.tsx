@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect } from 'vitest';
 import { useState } from 'react';
-import UnitToggle from '../../src/components/UnitToggle';
+import { describe, expect, it } from 'vitest';
 import CurrentWeather from '../../src/components/CurrentWeather';
+import UnitToggle from '../../src/components/UnitToggle';
 import type { City, CurrentWeather as CurrentWeatherType, Unit } from '../../src/types/weather';
 
 const city: City = {
@@ -42,6 +42,9 @@ describe('UnitToggle + CurrentWeather', () => {
 
     await userEvent.click(screen.getByRole('button', { name: '°F' }));
     expect(screen.getByText('32°')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: '°C' }));
+    expect(screen.getByText('0°')).toBeInTheDocument();
   });
 
   it('expõe os botões com estado pressionado acessível', () => {
