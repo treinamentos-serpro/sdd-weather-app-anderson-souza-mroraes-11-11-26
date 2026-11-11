@@ -86,11 +86,7 @@ describe('CurrentWeather', () => {
       longitude: -9.14,
     };
     render(
-      <CurrentWeather
-        city={city}
-        current={{ ...CURRENT, precipitation: 0.1 }}
-        unit="celsius"
-      />,
+      <CurrentWeather city={city} current={{ ...CURRENT, precipitation: 0.1 }} unit="celsius" />,
     );
 
     expect(screen.getByText('0,1 mm')).toBeInTheDocument();
